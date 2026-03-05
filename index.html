@@ -507,26 +507,21 @@
       margin-top: 4px;
     }
 
-    /* ===== MARIO RUNNER ===== */
-    .runner-container {
-      position: fixed;
-      bottom: 60px;
-      left: 0;
-      width: 100%;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 11;
-      height: 60px;
+    /* ===== MARIO IMAGE ===== */
+    .mario-img-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
     }
-    .mario-runner {
-      position: absolute;
-      bottom: 4px;
-      font-size: 30px;
-      animation: marioRunner 8s linear infinite;
+    .mario-img {
+      width: 180px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5));
+      animation: marioFloat 3s ease-in-out infinite;
     }
-    @keyframes marioRunner {
-      from { left: -60px; transform: scaleX(1); }
-      to   { left: 110%; transform: scaleX(1); }
+    @keyframes marioFloat {
+      0%,100% { transform: translateY(0) rotate(-2deg); }
+      50%      { transform: translateY(-14px) rotate(2deg); }
     }
 
     /* ===== FIREWORKS ===== */
@@ -620,11 +615,6 @@
 <div class="qblock q2" onclick="hitBlock(this)">❓</div>
 <div class="qblock q3" onclick="hitBlock(this)">❓</div>
 
-<!-- Mario Runner -->
-<div class="runner-container">
-  <div class="mario-runner">🏃</div>
-</div>
-
 <!-- ===== MAIN CONTENT ===== -->
 <div class="container">
 
@@ -634,6 +624,9 @@
     <div class="title-its">✦ PLAYER 1 BIRTHDAY ✦</div>
     <div class="title-birthday">¡FELIZ CUMPLEAÑOS!</div>
     <span class="title-name">Dylan Janai</span>
+    <div class="mario-img-wrapper">
+      <img class="mario-img" src="mar1.png" alt="Mario" />
+    </div>
   </div>
 
   <!-- PIXEL DIVIDER -->
