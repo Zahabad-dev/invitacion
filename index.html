@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¡Cumpleaños de Dylan Janai!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --mario-red: #e52521;
+      --mario-blue: #049cd8;
+      --mario-yellow: #fbd000;
+      --mario-green: #43b047;
+      --mario-brown: #8b4513;
+      --sky: #5c94fc;
+      --ground: #e0a020;
+      --brick: #c84c0c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--sky);
+      font-family: 'Press Start 2P', monospace;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ===== STARS BACKGROUND ===== */
+    #stars-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 6px; height: 6px;
+      background: #fff;
+      clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      animation: twinkle 2s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0.2; transform: scale(0.6); }
+    }
+
+    /* ===== CLOUDS ===== */
+    .cloud {
+      position: fixed;
+      top: 60px;
+      background: white;
+      border-radius: 50px;
+      padding: 15px 30px;
+      animation: cloudMove linear infinite;
+      opacity: 0.9;
+      z-index: 1;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+    .cloud::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+    .cloud::after  { width: 35px; height: 35px; top: -15px; right: 20px; }
+    .cloud.c1 { left: -200px; animation-duration: 22s; animation-delay: 0s;  top: 40px;  width: 100px; height: 30px; }
+    .cloud.c2 { left: -200px; animation-duration: 30s; animation-delay: 7s;  top: 90px;  width: 120px; height: 35px; }
+    .cloud.c3 { left: -200px; animation-duration: 18s; animation-delay: 14s; top: 20px;  width: 80px;  height: 25px; }
+
+    @keyframes cloudMove { from { left: -220px; } to { left: 110vw; } }
+
+    /* ===== GROUND ===== */
+    .ground {
+      position: fixed;
+      bottom: 0; left: 0;
+      width: 100%; height: 60px;
+      background: var(--ground);
+      border-top: 6px solid #c8841c;
+      z-index: 10;
+      image-rendering: pixelated;
+    }
+    .ground::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent, transparent 39px,
+        rgba(0,0,0,0.08) 39px, rgba(0,0,0,0.08) 40px
+      );
+    }
+
+    /* ===== PIPE ===== */
+    .pipe {
+      position: fixed;
+      bottom: 55px;
+      width: 55px;
+      z-index: 9;
+    }
+    .pipe-top {
+      background: var(--mario-green);
+      height: 20px;
+      width: 65px;
+      border-radius: 4px 4px 0 0;
+      border: 3px solid #1a7a1a;
+      margin-left: -5px;
+    }
+    .pipe-body {
+      background: var(--mario-green);
+      height: 80px;
+      border: 3px solid #1a7a1a;
+      border-top: none;
+    }
+    .pipe.left  { left: 30px; }
+    .pipe.right { right: 30px; }
+
+    /* ===== FLOATING COINS ===== */
+    .coin-float {
+      position: fixed;
+      width: 20px; height: 20px;
+      background: var(--mario-yellow);
+      border-radius: 50%;
+      border: 3px solid #c8a000;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2);
+      animation: coinSpin 1s linear infinite, coinFloat linear infinite;
+      z-index: 5;
+    }
+    @keyframes coinSpin {
+      0%   { transform: scaleX(1); }
+      25%  { transform: scaleX(0.3); }
+      50%  { transform: scaleX(1); }
+      75%  { transform: scaleX(0.3); }
+      100% { transform: scaleX(1); }
+    }
+    @keyframes coinFloat {
+      from { bottom: -30px; opacity: 1; }
+      to   { bottom: 110vh; opacity: 0; }
+    }
+
+    /* ===== QUESTION BLOCKS ===== */
+    .qblock {
+      position: fixed;
+      width: 45px; height: 45px;
+      background: var(--mario-yellow);
+      border: 4px solid #c8a000;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 8;
+      transition: transform 0.1s;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.2), 4px 4px 0 rgba(0,0,0,0.3);
+      animation: blockBob 2s ease-in-out infinite;
+    }
+    .qblock:hover { transform: scale(1.15); }
+    .qblock:active { transform: translateY(-8px) scale(1.1); }
+    .qblock.hit { animation: blockHit 0.3s ease-out forwards, blockBob 2s 0.3s ease-in-out infinite; }
+    .qblock.q1 { top: 200px; left: 15%; animation-delay: 0s; }
+    .qblock.q2 { top: 180px; left: 50%; animation-delay: 0.5s; }
+    .qblock.q3 { top: 200px; right: 15%; animation-delay: 1s; }
+
+    @keyframes blockBob {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    @keyframes blockHit {
+      0%   { transform: translateY(0); }
+      40%  { transform: translateY(-15px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .container {
+      position: relative;
+      z-index: 20;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 20px 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      text-align: center;
+      margin-top: 20px;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    .header .crown {
+      font-size: 52px;
+      animation: crownBounce 1.5s ease-in-out infinite;
+      display: block;
+      margin-bottom: 6px;
+    }
+    @keyframes crownBounce {
+      0%,100% { transform: translateY(0) rotate(-5deg); }
+      50%      { transform: translateY(-10px) rotate(5deg); }
+    }
+
+    .title-its {
+      font-size: 13px;
+      color: var(--mario-yellow);
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    .title-birthday {
+      font-size: clamp(22px, 5vw, 36px);
+      color: #fff;
+      text-shadow: 3px 3px 0 var(--mario-red), 6px 6px 0 #000;
+      margin-bottom: 4px;
+      animation: titleWiggle 3s ease-in-out infinite;
+    }
+
+    @keyframes titleWiggle {
+      0%,100% { transform: skewX(0deg); }
+      25%      { transform: skewX(-3deg); }
+      75%      { transform: skewX(3deg); }
+    }
+
+    .title-name {
+      font-size: clamp(28px, 7vw, 52px);
+      color: var(--mario-yellow);
+      text-shadow: 3px 3px 0 var(--mario-red), 6px 6px 0 #000;
+      animation: nameGlow 2s ease-in-out infinite alternate;
+      display: block;
+      margin-top: 4px;
+    }
+
+    @keyframes nameGlow {
+      from { filter: drop-shadow(0 0 5px var(--mario-yellow)); }
+      to   { filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 30px var(--mario-yellow)); }
+    }
+
+    /* ===== MARIO SPRITE ===== */
+    .mario-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 30px;
+      animation: fadeIn 1s 0.5s both;
+    }
+
+    .mario-sprite {
+      width: 80px; height: 80px;
+      image-rendering: pixelated;
+      animation: marioRun 0.4s steps(2) infinite;
+    }
+
+    /* CSS Pixel-art Mario */
+    .mario-art {
+      display: grid;
+      grid-template-columns: repeat(12, 8px);
+      grid-template-rows: repeat(16, 8px);
+      image-rendering: pixelated;
+      transform: scale(0.8);
+    }
+
+    /* ===== CARD ===== */
+    .card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 18px;
+      padding: 28px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out both;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: shine 4s linear infinite;
+    }
+    @keyframes shine { to { left: 200%; } }
+
+    .card.delay-1 { animation-delay: 0.2s; }
+    .card.delay-2 { animation-delay: 0.4s; }
+    .card.delay-3 { animation-delay: 0.6s; }
+
+    /* ===== PIXEL DIVIDER ===== */
+    .pixel-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .pixel-divider span {
+      display: inline-block;
+      width: 10px; height: 10px;
+      background: var(--mario-yellow);
+      border: 2px solid #000;
+    }
+    .pixel-divider span:nth-child(odd)  { background: var(--mario-red); }
+    .pixel-divider span:nth-child(5)    { background: var(--mario-blue); transform: scale(1.4); }
+
+    /* ===== INFO SECTION ===== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,0.08);
+      border: 3px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .info-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .info-item .icon { font-size: 30px; display: block; margin-bottom: 8px; animation: bob 2s ease-in-out infinite; }
+    .info-item .label { font-size: 8px; color: var(--mario-yellow); margin-bottom: 5px; letter-spacing: 1px; }
+    .info-item .value { font-size: 10px; color: #fff; text-shadow: 1px 1px 0 #000; line-height: 1.6; }
+
+    @keyframes bob {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-4px); }
+    }
+
+    /* ===== LIVES COUNTER ===== */
+    .lives-section {
+      text-align: center;
+    }
+    .lives-section .lives-title {
+      font-size: 10px;
+      color: var(--mario-yellow);
+      text-shadow: 2px 2px 0 #000;
+      margin-bottom: 12px;
+    }
+    .lives-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .life-icon {
+      font-size: 26px;
+      animation: lifeFloat 2s ease-in-out infinite;
+    }
+    .life-icon:nth-child(1) { animation-delay: 0s; }
+    .life-icon:nth-child(2) { animation-delay: 0.3s; }
+    .life-icon:nth-child(3) { animation-delay: 0.6s; }
+    .life-icon:nth-child(4) { animation-delay: 0.9s; }
+    .life-icon:nth-child(5) { animation-delay: 1.2s; }
+    .life-icon:nth-child(6) { animation-delay: 1.5s; }
+    .life-icon:nth-child(7) { animation-delay: 1.8s; }
+    @keyframes lifeFloat {
+      0%,100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-6px) scale(1.1); }
+    }
+
+    /* ===== SCORE COUNTER ===== */
+    .score-board {
+      background: #000;
+      border: 4px solid var(--mario-yellow);
+      border-radius: 10px;
+      padding: 14px 22px;
+      text-align: center;
+      color: var(--mario-yellow);
+      font-size: 11px;
+      letter-spacing: 2px;
+      box-shadow: 0 4px 0 #8b6a00, 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .score-board .score-label { font-size: 8px; opacity: 0.7; margin-bottom: 6px; }
+    .score-num {
+      font-size: 28px;
+      color: #fff;
+      animation: scoreCount 2s ease-out forwards;
+    }
+    @keyframes scoreCount {
+      from { content: '000000'; opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ===== MESSAGE ===== */
+    .message-box {
+      background: #000;
+      border: 4px solid #fff;
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+    .message-box::after {
+      content: '';
+      position: absolute;
+      bottom: -14px; left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-top-color: #fff;
+    }
+    .message-text {
+      color: #fff;
+      font-size: 9px;
+      line-height: 2;
+      text-align: center;
+    }
+    .message-text .highlight {
+      color: var(--mario-yellow);
+      font-size: 10px;
+    }
+    .cursor {
+      display: inline-block;
+      width: 10px; height: 14px;
+      background: #fff;
+      vertical-align: middle;
+      animation: blink 1s step-start infinite;
+      margin-left: 2px;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ===== BUTTON ===== */
+    .btn-rsvp {
+      display: inline-block;
+      background: var(--mario-red);
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 6px 0 #8b0000, 0 10px 20px rgba(0,0,0,0.4);
+      transition: transform 0.1s, box-shadow 0.1s;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      animation: btnPulse 3s ease-in-out infinite;
+    }
+    .btn-rsvp::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: btnShine 2s linear infinite;
+    }
+    @keyframes btnShine { to { left: 200%; } }
+    @keyframes btnPulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.03); }
+    }
+    .btn-rsvp:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 0 #8b0000, 0 14px 25px rgba(0,0,0,0.5);
+    }
+    .btn-rsvp:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #8b0000;
+    }
+
+    /* ===== COUNTDOWN ===== */
+    .countdown-section { text-align: center; }
+    .countdown-title {
+      font-size: 9px;
+      color: var(--mario-yellow);
+      text-shadow: 2px 2px 0 #000;
+      margin-bottom: 16px;
+    }
+    .countdown-grid {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .cd-item {
+      background: #000;
+      border: 3px solid var(--mario-yellow);
+      border-radius: 8px;
+      padding: 10px 14px;
+      min-width: 70px;
+      text-align: center;
+    }
+    .cd-num {
+      font-size: 26px;
+      color: var(--mario-yellow);
+      display: block;
+      line-height: 1;
+    }
+    .cd-label {
+      font-size: 7px;
+      color: rgba(255,255,255,0.6);
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ===== MARIO RUNNER ===== */
+    .runner-container {
+      position: fixed;
+      bottom: 60px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 11;
+      height: 60px;
+    }
+    .mario-runner {
+      position: absolute;
+      bottom: 4px;
+      font-size: 30px;
+      animation: marioRunner 8s linear infinite;
+    }
+    @keyframes marioRunner {
+      from { left: -60px; transform: scaleX(1); }
+      to   { left: 110%; transform: scaleX(1); }
+    }
+
+    /* ===== FIREWORKS ===== */
+    .firework {
+      position: fixed;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: none; } }
+    @keyframes fadeInUp   { from { opacity: 0; transform: translateY(30px);  } to { opacity: 1; transform: none; } }
+    @keyframes pulse      { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* ===== MUSHROOM FOOTER ===== */
+    .footer-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+    .footer-row span {
+      animation: bob 2s ease-in-out infinite;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .footer-row span:hover { transform: scale(1.4) rotate(-10deg); }
+    .footer-row span:nth-child(2) { animation-delay: 0.3s; }
+    .footer-row span:nth-child(3) { animation-delay: 0.6s; }
+    .footer-row span:nth-child(4) { animation-delay: 0.9s; }
+    .footer-row span:nth-child(5) { animation-delay: 1.2s; }
+
+    /* ===== BUBBLE TEXT ===== */
+    .bubble-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .bubble {
+      background: var(--mario-red);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 8px;
+      border: 2px solid rgba(255,255,255,0.3);
+      animation: bob 2s ease-in-out infinite;
+      text-shadow: 1px 1px 0 #000;
+    }
+    .bubble:nth-child(2) { background: var(--mario-blue); animation-delay: 0.4s; }
+    .bubble:nth-child(3) { background: var(--mario-green); animation-delay: 0.8s; }
+    .bubble:nth-child(4) { background: #9b59b6; animation-delay: 1.2s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .title-birthday { font-size: 18px; }
+      .title-name { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div id="stars-container"></div>
+
+<!-- Clouds -->
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+
+<!-- Ground -->
+<div class="ground"></div>
+
+<!-- Pipes -->
+<div class="pipe left">
+  <div class="pipe-top"></div>
+  <div class="pipe-body"></div>
+</div>
+<div class="pipe right">
+  <div class="pipe-top"></div>
+  <div class="pipe-body"></div>
+</div>
+
+<!-- Question Blocks -->
+<div class="qblock q1" onclick="hitBlock(this)">❓</div>
+<div class="qblock q2" onclick="hitBlock(this)">❓</div>
+<div class="qblock q3" onclick="hitBlock(this)">❓</div>
+
+<!-- Mario Runner -->
+<div class="runner-container">
+  <div class="mario-runner">🏃</div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="crown">👑</span>
+    <div class="title-its">✦ PLAYER 1 BIRTHDAY ✦</div>
+    <div class="title-birthday">¡FELIZ CUMPLEAÑOS!</div>
+    <span class="title-name">Dylan Janai</span>
+  </div>
+
+  <!-- PIXEL DIVIDER -->
+  <div class="pixel-divider">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- SCORE BOARD -->
+  <div class="score-board">
+    <div class="score-label">HI-SCORE</div>
+    <div class="score-num" id="scoreNum">000000</div>
+    <div style="font-size:8px;color:rgba(255,255,255,0.5);margin-top:6px;">COIN × <span id="coinCount">0</span></div>
+  </div>
+
+  <!-- MESSAGE CARD -->
+  <div class="card delay-1">
+    <div class="message-box">
+      <div class="message-text">
+        ¡El Reino <span class="highlight">Mushroom</span> te invita<br>
+        a la celebración más<br>
+        <span class="highlight">ÉPICA</span> del año!<br><br>
+        ¡<span class="highlight">Dylan Janai</span> cumple otro<br>
+        año de aventuras y<br>
+        derrotar villanos! 🍄<span class="cursor"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO GRID -->
+  <div class="info-grid">
+    <div class="info-item" style="animation-delay:0.1s">
+      <span class="icon">🎂</span>
+      <div class="label">FECHA</div>
+      <div class="value">SÁBADO<br>22 DE MARZO<br>2026</div>
+    </div>
+    <div class="info-item" style="animation-delay:0.2s">
+      <span class="icon" style="animation-delay:0.5s">⏰</span>
+      <div class="label">HORA</div>
+      <div class="value">4:00 PM<br>¡NO LLEGUES<br>TARDE!</div>
+    </div>
+    <div class="info-item" style="animation-delay:0.3s">
+      <span class="icon" style="animation-delay:1s">📍</span>
+      <div class="label">LUGAR</div>
+      <div class="value">CASTILLO DEL<br>REINO<br>MUSHROOM</div>
+    </div>
+    <div class="info-item" style="animation-delay:0.4s">
+      <span class="icon" style="animation-delay:1.5s">🎮</span>
+      <div class="label">DRESS CODE</div>
+      <div class="value">¡VEN CON<br>TU TRAJE<br>FAVORITO!</div>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="card delay-2">
+    <div class="countdown-section">
+      <div class="countdown-title">⏳ CUENTA REGRESIVA ⏳</div>
+      <div class="countdown-grid">
+        <div class="cd-item">
+          <span class="cd-num" id="cdDays">--</span>
+          <span class="cd-label">DÍAS</span>
+        </div>
+        <div class="cd-item">
+          <span class="cd-num" id="cdHours">--</span>
+          <span class="cd-label">HORAS</span>
+        </div>
+        <div class="cd-item">
+          <span class="cd-num" id="cdMins">--</span>
+          <span class="cd-label">MIN</span>
+        </div>
+        <div class="cd-item">
+          <span class="cd-num" id="cdSecs">--</span>
+          <span class="cd-label">SEG</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVES -->
+  <div class="card delay-3">
+    <div class="lives-section">
+      <div class="lives-title">× POWER-UPS INCLUIDOS ×</div>
+      <div class="lives-bar">
+        <span class="life-icon">🍕</span>
+        <span class="life-icon">🎵</span>
+        <span class="life-icon">🎉</span>
+        <span class="life-icon">🎁</span>
+        <span class="life-icon">🍰</span>
+        <span class="life-icon">🎊</span>
+        <span class="life-icon">🍄</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUBBLE TAGS -->
+  <div class="bubble-row">
+    <div class="bubble">🎮 VIDEO GAMES</div>
+    <div class="bubble">🍄 MARIO BROS</div>
+    <div class="bubble">🌟 ESTRELLA</div>
+    <div class="bubble">🎊 FIESTA</div>
+  </div>
+
+  <!-- CONFIRM BUTTON -->
+  <button class="btn-rsvp" onclick="rsvp()">
+    ▶ &nbsp; ¡CONFIRMAR ASISTENCIA!
+  </button>
+
+  <!-- FOOTER ICONS -->
+  <div class="footer-row">
+    <span title="Mario">🍄</span>
+    <span title="Estrella">⭐</span>
+    <span title="Champiñón">🌟</span>
+    <span title="Flor">🌸</span>
+    <span title="Castillo">🏰</span>
+  </div>
+
+  <div style="font-size:7px;color:rgba(255,255,255,0.4);text-align:center;padding-bottom:10px;">
+    © MARIO PARTY STUDIOS · 2026
+  </div>
+
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+  /* ---------- STARS ---------- */
+  const starsContainer = document.getElementById('stars-container');
+  for (let i = 0; i < 60; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*70}%;
+      animation-duration:${1.5+Math.random()*3}s;
+      animation-delay:${Math.random()*3}s;
+      opacity:${0.3+Math.random()*0.7};
+      transform:scale(${0.5+Math.random()});
+    `;
+    starsContainer.appendChild(star);
+  }
+
+  /* ---------- FLOATING COINS ---------- */
+  function spawnCoin() {
+    const coin = document.createElement('div');
+    coin.className = 'coin-float';
+    const dur = 4 + Math.random() * 4;
+    coin.style.cssText = `
+      left:${Math.random()*100}%;
+      animation-duration: 1s, ${dur}s;
+      animation-delay: 0s, 0s;
+      width:${12+Math.random()*12}px;
+      height:${12+Math.random()*12}px;
+    `;
+    document.body.appendChild(coin);
+    setTimeout(() => coin.remove(), dur * 1000);
+  }
+  setInterval(spawnCoin, 900);
+
+  /* ---------- SCORES ---------- */
+  let score = 0;
+  let coins = 0;
+  const scoreEl = document.getElementById('scoreNum');
+  const coinEl  = document.getElementById('coinCount');
+
+  function addScore(pts) {
+    score += pts;
+    scoreEl.textContent = String(score).padStart(6,'0');
+  }
+
+  function addCoin() {
+    coins++;
+    coinEl.textContent = coins;
+    addScore(200);
+    if (coins % 100 === 0) spawnFireworks();
+  }
+
+  /* ---------- QUESTION BLOCKS ---------- */
+  function hitBlock(el) {
+    if (el.dataset.hit) return;
+    el.dataset.hit = '1';
+    el.classList.add('hit');
+    el.textContent = '⬜';
+    el.style.background = '#888';
+    el.style.borderColor = '#555';
+    spawnCoinBurst(el);
+    addCoin();
+    playBlockSound();
+    setTimeout(() => el.classList.remove('hit'), 400);
+  }
+
+  function spawnCoinBurst(el) {
+    const rect = el.getBoundingClientRect();
+    for (let i = 0; i < 5; i++) {
+      const c = document.createElement('div');
+      c.style.cssText = `
+        position:fixed;
+        left:${rect.left + rect.width/2}px;
+        top:${rect.top}px;
+        font-size:${14+Math.random()*8}px;
+        pointer-events:none;
+        z-index:999;
+        animation: coinBurst 0.8s ease-out forwards;
+        --tx:${(Math.random()-0.5)*80}px;
+        --ty:${-30-Math.random()*60}px;
+      `;
+      c.textContent = '🪙';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 900);
+    }
+  }
+
+  /* ---------- COIN BURST KEYFRAME (dynamic) ---------- */
+  const dynStyle = document.createElement('style');
+  dynStyle.textContent = `
+    @keyframes coinBurst {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(dynStyle);
+
+  /* ---------- RSVP ---------- */
+  function rsvp() {
+    addScore(5000);
+    spawnFireworks();
+    showModal();
+  }
+
+  function showModal() {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position:fixed; inset:0; background:rgba(0,0,0,0.85);
+      display:flex; align-items:center; justify-content:center;
+      z-index:10000; animation:fadeIn 0.3s;
+    `;
+    overlay.innerHTML = `
+      <div style="
+        background:#000; border:5px solid var(--mario-yellow);
+        border-radius:16px; padding:36px; text-align:center;
+        max-width:380px; width:90%;
+        font-family:'Press Start 2P',monospace; color:#fff;
+        box-shadow: 0 0 40px var(--mario-yellow);
+        animation: fadeInDown 0.4s;
+      ">
+        <div style="font-size:44px;margin-bottom:14px;">🎉</div>
+        <div style="color:var(--mario-yellow);font-size:12px;margin-bottom:16px;">¡GAME ON!</div>
+        <div style="font-size:8px;line-height:2.2;margin-bottom:22px;">
+          ¡Perfecto! Tu asistencia<br>
+          ha sido confirmada.<br>
+          <span style="color:var(--mario-yellow)">+5000 puntos</span> añadidos!<br><br>
+          ¡Nos vemos en la fiesta,<br>
+          héroe del Reino Mushroom!
+        </div>
+        <div style="font-size:28px;margin-bottom:20px;">🍄⭐🎮🌟🎂</div>
+        <button onclick="this.closest('div[style*=inset]').remove()" style="
+          background:var(--mario-red); color:#fff;
+          font-family:'Press Start 2P',monospace;
+          font-size:9px; padding:12px 24px;
+          border:none; border-radius:8px; cursor:pointer;
+          box-shadow:0 4px 0 #8b0000;
+        ">▶ OK!</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => {
+      if(e.target === overlay) overlay.remove();
+    });
+  }
+
+  /* ---------- FIREWORKS ---------- */
+  function spawnFireworks() {
+    const colors = ['#e52521','#fbd000','#049cd8','#43b047','#ff69b4','#9b59b6'];
+    for (let i = 0; i < 60; i++) {
+      setTimeout(() => {
+        const fw = document.createElement('div');
+        const color = colors[Math.floor(Math.random()*colors.length)];
+        const x = 10 + Math.random() * 80;
+        const y = 10 + Math.random() * 60;
+        fw.style.cssText = `
+          position:fixed; left:${x}vw; top:${y}vh;
+          width:8px; height:8px; border-radius:50%;
+          background:${color}; pointer-events:none; z-index:9999;
+          --tx:${(Math.random()-0.5)*200}px;
+          --ty:${(Math.random()-0.5)*200}px;
+          animation: fwExplode 1s ease-out forwards;
+          box-shadow: 0 0 6px ${color};
+        `;
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 1100);
+      }, i * 40);
+    }
+  }
+
+  const fwStyle = document.createElement('style');
+  fwStyle.textContent = `
+    @keyframes fwExplode {
+      0%   { transform: translate(0,0) scale(1); opacity:1; }
+      100% { transform: translate(var(--tx),var(--ty)) scale(0); opacity:0; }
+    }
+  `;
+  document.head.appendChild(fwStyle);
+
+  /* ---------- COUNTDOWN ---------- */
+  const partyDate = new Date('2026-03-22T16:00:00');
+
+  function updateCountdown() {
+    const now  = new Date();
+    const diff = partyDate - now;
+    if (diff <= 0) {
+      document.getElementById('cdDays').textContent  = '00';
+      document.getElementById('cdHours').textContent = '00';
+      document.getElementById('cdMins').textContent  = '00';
+      document.getElementById('cdSecs').textContent  = '00';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
+    document.getElementById('cdDays').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cdHours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cdMins').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cdSecs').textContent  = String(s).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ---------- SOUND (Web Audio API) ---------- */
+  let audioCtx;
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function playTone(freq, start, duration, type='square', vol=0.15) {
+    try {
+      const ctx = getCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+      gain.gain.setValueAtTime(vol, ctx.currentTime + start);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + duration);
+    } catch(e){}
+  }
+
+  function playBlockSound() {
+    playTone(523, 0, 0.08);
+    playTone(659, 0.08, 0.12);
+  }
+
+  function playCoinSound() {
+    playTone(988, 0, 0.06);
+    playTone(1319, 0.06, 0.14);
+  }
+
+  function playMarioTheme() {
+    const notes = [
+      [659,0],[659,0.18],[659,0.36],[523,0.54],[659,0.72],[784,0.9],[392,1.2],
+      [523,1.5],[392,1.8],[330,2.1],[440,2.4],[494,2.7],[466,2.90],[440,3.1],
+      [392,3.3],[659,3.6],[784,3.87],[880,4.14],[698,4.41],[784,4.68],
+      [659,4.95],[523,5.22],[587,5.49],[494,5.76]
+    ];
+    notes.forEach(([f,t]) => playTone(f, t, 0.15, 'square', 0.08));
+  }
+
+  /* Trigger theme on first interaction */
+  let themePlayed = false;
+  document.addEventListener('click', () => {
+    if (!themePlayed) { themePlayed = true; playMarioTheme(); }
+  }, { once: true });
+
+  /* ---------- INITIAL SCORE ANIMATION ---------- */
+  let initScore = 0;
+  const initInterval = setInterval(() => {
+    initScore += 1337;
+    if (initScore >= 100000) { initScore = 99999; clearInterval(initInterval); }
+    scoreEl.textContent = String(initScore).padStart(6,'0');
+  }, 30);
+
+  /* ---------- CLICK ANYWHERE = COIN ---------- */
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.btn-rsvp') || e.target.closest('.qblock')) return;
+    const spark = document.createElement('div');
+    spark.style.cssText = `
+      position:fixed; left:${e.clientX-10}px; top:${e.clientY-10}px;
+      font-size:20px; pointer-events:none; z-index:9998;
+      animation: coinBurst 0.6s ease-out forwards;
+      --tx:0px; --ty:-40px;
+    `;
+    spark.textContent = '⭐';
+    document.body.appendChild(spark);
+    playCoinSound();
+    addCoin();
+    setTimeout(() => spark.remove(), 700);
+  });
+
+  /* ---------- INITIAL FIREWORKS ---------- */
+  setTimeout(() => spawnFireworks(), 600);
+  setTimeout(() => spawnFireworks(), 2500);
+</script>
+</body>
+</html>
